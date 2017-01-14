@@ -1,0 +1,63 @@
+<project name="TriangleGenome" basedir="." default="main">
+
+    <property name="src.dir"     value="src"/>
+    <property name="image.dir"     value="src/images"/>
+    <property name="testfiles.dir"     value="src/testfiles"/>
+    <property name="build.dir"   value="build"/>
+    <property name="classes.dir" value="${build.dir}/project"/>
+	<property name="bin.dir" value="${classes.dir}/bin" />
+    <property name="jar.dir"     value="${build.dir}/jar"/>
+	<property name="api-doc.dir" value="api-doc"/>
+	<property name="doc.dir" value="doc"/>
+
+    <property name="main-class"  value="trianglegenome.TriangleGenome"/>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${bin.dir}"/>
+        <mkdir dir="${classes.dir}/src"/>
+        <javac srcdir="${src.dir}" destdir="${bin.dir}"/>
+    	<javadoc sourcepath="${src.dir}" destdir="${api-doc.dir}"/>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="${jar.dir}"/>
+    	<copy todir="${bin.dir}/api-doc">
+    		<fileset dir="${api-doc.dir}"/>
+    	</copy>
+		<copy todir="${bin.dir}/images">
+			<fileset dir="${image.dir}"/>
+		</copy>
+		<copy todir="${bin.dir}/testfiles">
+			<fileset dir="${testfiles.dir}"/>
+		</copy>
+		<copy todir="${bin.dir}/src">
+			<fileset dir="${src.dir}"/>
+		</copy>
+		<copy todir="${bin.dir}/doc">
+			<fileset dir="${doc.dir}"/>
+		</copy>
+
+		<copy todir="${bin.dir}/">
+			<fileset file="README.md"/>
+		</copy>
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${bin.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run" depends="jar">
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true"/>
+    </target>
+
+    <target name="clean-build" depends="clean,jar"/>
+
+    <target name="main" depends="clean-build"/>
+
+</project>
